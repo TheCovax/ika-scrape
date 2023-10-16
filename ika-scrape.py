@@ -232,7 +232,23 @@ def find_island(miracle_filter="none", tgood_filter="none", x_min_filter = 1, x_
                                 if y_min_filter <= i[4] <= y_max_filter:
                                     print(i[0],i[1],i[2],i[5],sep=", ")
     
-    
+def ms_compare(): #TODO add ms compare feature
+    all_csv = []
+
+    if True:
+        players = []
+        
+        for (root,dirs,files) in os.walk('.',topdown=True):
+            for f in files:
+                if f[-4:] ==".csv":
+                    all_csv.append(f)
+        
+        
+        
+            for file in all_csv:
+                with open(file, 'r', encoding='utf-8') as f:
+                    f.readline()
+                    csv_str = f.read()
 
 world_view_url = "https://s305-en.ikariam.gameforge.com/?view=worldmap_iso"
 highscore_url = "https://s305-en.ikariam.gameforge.com/index.php?view=highscore"
@@ -244,28 +260,8 @@ lobby_url = "https://lobby.ikariam.gameforge.com/en_GB"
 
 url = world_view_url
 
-
-
-all_csv = []
-
-if True:
-    players = []
-    
-    for (root,dirs,files) in os.walk('.',topdown=True):
-        print("Files: ")
-        for f in files:
-            if f[-4:] ==".csv":
-                all_csv.append(f)
-    
-    
-    
-        for file in all_csv:
-            with open(file, 'r', encoding='utf-8') as f:
-                f.readline()
-                csv_str = f.read()
-
 options = Options()
-#options.add_argument("--headless=new")
+options.add_argument("--headless=new")
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 driver = webdriver.Chrome(options=options)
 
@@ -285,7 +281,7 @@ while True:
         
         driver.get(lobby_url)
         
-        time.sleep(2)
+        time.sleep(1)
         
         login_tab = driver.find_element(By.XPATH, "//ul[@class='tabsList']/li[text()='Log in']")
         register_tab = driver.find_element(By.XPATH, "//ul[@class='tabsList']/li[text()='Register']")
@@ -300,19 +296,15 @@ while True:
         
         email_field.send_keys(email_in)
         pw_field.send_keys(password_in)
-        
         time.sleep(1)
         
         driver.find_element(By.CLASS_NAME, "button-primary").click()
-        
-        time.sleep(3)
+        time.sleep(1)
         
         driver.get(lobby_url+"/accounts")
-        
-        time.sleep(3)
+        time.sleep(1)
         
         pangaia5 = driver.find_element(By.XPATH, "//div[contains(text(), 'Pangaia 5')]")
-        
         time.sleep(1)
         pangaia5.click() 
         time.sleep(1)
@@ -322,27 +314,7 @@ while True:
         break
     else:
         print("unknown command")
-        
-        
-    
 
-
-
-
-input("wait")
-
-logged_in_as = BeautifulSoup(driver.page_source, 'html.parser').find(class_="avatarName")
-if type(logged_in_as) == "NoneType":
-    print("\n!!!Authentication failed!!!")
-else:
-    print(type(logged_in_as))
-    logged_in_as = logged_in_as.find("a",class_="noViewParameters")["title"]
-
-if logged_in_as == "None":
-    
-    print("\n!!!Authentication failed!!!")
-    
-else: print("\nProgram logged in as: "+logged_in_as)
 
 while True:
     print("Please choose from the following options what you would like to do.")
@@ -405,9 +377,14 @@ while True:
         good_select = int(input(":"))
         
         
+        xmin = int(input("minimum x coordinate:"))
+        xmax = int(input("maximum x coordinate:"))
+        ymin = int(input("minimum y coordinate:"))
+        ymax = int(input("maximum y coordinate:"))
+        citymin = int(input("minimum number of cities:"))
+        citymax = int(input("maximum number of cities:"))
         
-        
-        find_island(miracles[miracle_select-1],trade_goods[good_select-1],45,70,30,55,15,0)
+        find_island(miracles[miracle_select-1],trade_goods[good_select-1],xmin,xmax,ymin,ymax,citymax,citymin)
         
 
     
