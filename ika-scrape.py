@@ -109,6 +109,21 @@ def parse_islands_from_source(full_source): #gets worldview with 22x22 islands (
                 island_city_nr = island.find(class_ = "cities")
                 island_data.append(island_city_nr.text)
                 
+                owner = island.find(class_ = "ownerState") 
+                owner = owner.get('class',[])
+                
+                if len(owner) == 2:
+                    if owner[1] == "own":
+                        island_data.append(2)
+                    elif owner[1] == "ally":
+                        island_data.append(1)
+                    else:
+                        island_data.append(0)
+                else:
+                    island_data.append(0)
+                
+                
+                
                 islands[i][j] = island_data
             else:
                 islands[i][j] = "x"
@@ -211,7 +226,7 @@ def refresh_local_map():
     
     write_to_file(islandstr,"island.txt")
 
-def find_island(miracle_filter="none", tgood_filter="none", x_min_filter = 1, x_max_filter=100, y_min_filter=1, y_max_filter=100, max_cities_filter = 15, min_cities_filter = 1):
+def find_island(miracle_filter="none", tgood_filter="none", x_min_filter = 1, x_max_filter=100, y_min_filter=1, y_max_filter=100, max_cities_filter = 15, min_cities_filter = 1, is_ally = 0):
     
     f = open("island.txt","r")
     
@@ -230,7 +245,8 @@ def find_island(miracle_filter="none", tgood_filter="none", x_min_filter = 1, x_
                         if i[2] == tgood_filter or tgood_filter == "none":
                             if x_min_filter <= i[3] <= x_max_filter:
                                 if y_min_filter <= i[4] <= y_max_filter:
-                                    print(i[0],i[1],i[2],i[5],sep=", ")
+                                    if i[6] >= is_ally:
+                                        print(i[0],i[1],i[2],i[5],sep=", ")
     
 def ms_compare(): #TODO add ms compare feature
     all_csv = []
@@ -269,12 +285,12 @@ while True:
     auth_mode = input("select authentication mode:\n(1) Cookie\n(2) Login (email + password) (BETA)\n___________________\n:")
     if auth_mode == "1":
         ika_cookie = input("Please provide a valid 'ikariam' cookie:")
-        
+        print("Authenticating...")
         driver.get(url)
         driver.add_cookie({"name": "ikariam", "value": ika_cookie})
         driver.refresh()
         
-        print("Authenticating...")
+        
         break
     elif auth_mode == "2":
        
@@ -317,7 +333,7 @@ while True:
 
 
 while True:
-    print("Please choose from the following options what you would like to do.")
+    print("\n\nPlease choose from the following options what you would like to do.")
     
     options = [
         "(1) Fetch top 2000 Military Scores\n",
@@ -383,8 +399,9 @@ while True:
         ymax = int(input("maximum y coordinate:"))
         citymin = int(input("minimum number of cities:"))
         citymax = int(input("maximum number of cities:"))
+        is_ally = int(input("list only ally islands?\n(0) no\n(1) yes\n:"))
         
-        find_island(miracles[miracle_select-1],trade_goods[good_select-1],xmin,xmax,ymin,ymax,citymax,citymin)
+        find_island(miracles[miracle_select-1],trade_goods[good_select-1],xmin,xmax,ymin,ymax,citymax,citymin,is_ally)
         
 
     
