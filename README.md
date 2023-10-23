@@ -19,4 +19,6 @@ NOW WITH GUI!
 You can log in using your 'ikariam' cookie or your email and password.
 
 (you can get the cookie after pressing F12 or RMB > inspect, then going into the application tab > cookies and look for the cookie with the name 'ikariam')
+
+
 ![image](https://github.com/TheForeigner01/ika-scrape/assets/46358871/aff71dec-d9d6-4e5d-81fa-d790eb65541e)
