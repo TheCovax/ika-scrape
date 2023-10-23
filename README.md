@@ -12,6 +12,7 @@ Features as of now:
   - Allied or not
 
 NOW WITH GUI!
+
 ![Screenshot 2023-10-23 185025](https://github.com/TheForeigner01/ika-scrape/assets/46358871/004b0659-c37c-4926-8f84-14b458128906)
 ![Screenshot 2023-10-23 185007](https://github.com/TheForeigner01/ika-scrape/assets/46358871/d06a2ddb-c235-4b1e-ab31-dc32acff4a1f)
 
