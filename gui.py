@@ -1,21 +1,18 @@
 import PySimpleGUI as sg
 
 
-logged_in = "" 
-def set_loggedIn(user):
-    logged_in = user
-
-main_menu_layout = [
-    [sg.Text("You are logged in as "+logged_in)],
-    [sg.Text("")],
-    [sg.Text("Please choose from the following options what you would like to do.")],
-    [sg.Radio(f"Fetch top 2000 Military Scores", 1)],
-    [sg.Radio(f'Refresh local map', 1)    ],
-    [sg.Radio(f'Search Island', 1)    ],
-    [sg.Radio(f'Ship Building', 1)    ],
-    [sg.Radio(f'Check Attacks', 1)    ],
-    [sg.Button('Ok'), sg.Button('Cancel')] 
-]
+def main_menu_layout(user) :
+    return [
+        [sg.Text("You are logged in as "+user)],
+        [sg.Text("")],
+        [sg.Text("Please choose from the following options what you would like to do.")],
+        [sg.Radio(f"Fetch top 2000 Military Scores", 1)],
+        [sg.Radio(f'Refresh local map', 1)    ],
+        [sg.Radio(f'Search Island', 1)    ],
+        [sg.Radio(f'Ship Building', 1)    ],
+        [sg.Radio(f'Check Attacks', 1)    ],
+        [sg.Button('Ok'), sg.Button('Cancel')] 
+    ]
 
 fetch_ms_layout = [
     [sg.Text("Fetching Military scores...")],
@@ -55,9 +52,9 @@ check_attacks_layout = [
     [sg.Table([[1]],num_rows=3)]
 ]
 
-def create_main_layout(trade_goods, miracles, xcoord_max, xcoord_min, ycoord_max, ycoord_min, citymax, citymin, toggle_btn_off):
+def create_main_layout(trade_goods, miracles, xcoord_max, xcoord_min, ycoord_max, ycoord_min, citymax, citymin, toggle_btn_off,user):
     return  [
-        [sg.Column(main_menu_layout,visible=True,key='main_menu'),
+        [sg.Column(main_menu_layout(user),visible=True,key='main_menu'),
         sg.Column(fetch_ms_layout,visible=False, key='fetch_ms'),
         sg.Column(refresh_map_layout, visible=False, key='refresh_map'),
         sg.Column(create_island_search_layout(trade_goods, miracles, xcoord_max, xcoord_min, ycoord_max, ycoord_min, citymax, citymin, toggle_btn_off), visible=False, key='island_search'),

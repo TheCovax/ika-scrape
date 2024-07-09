@@ -28,4 +28,18 @@ full steams,morts,rockets vs 3 fires-4 steams,morts,4 dives-1 rockets; fully for
 ![](images/image-9.png)
 full fires,morts,rockets vs full steams,no morts,rockets; fires not forged vs fully forged
 <br>
-
+![](images/image-15.png)
+<br>
+![](images/image-10.png)
+<br>
+![](images/image-11.png)
+<br>
+![]images/(image-12.png)
+<br>
+![](images/image-13.png)
+<br>
+![](images/image-14.png)
+<br>
+![](images/image-16.png)
+<br>
+![alt text](image.png)
