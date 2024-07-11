@@ -42,4 +42,4 @@ full fires,morts,rockets vs full steams,no morts,rockets; fires not forged vs fu
 <br>
 ![](images/image-16.png)
 <br>
-![alt text](image.png)
+![](images/image-17.png)
