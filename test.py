@@ -5,7 +5,9 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import NoSuchElementException
 import sys,time,pytz
+import random
 
 def getGeneralViewRow(inner_html):
     soup = BeautifulSoup(inner_html, 'html.parser')
@@ -43,8 +45,12 @@ params = "?wait=true"
 def refreshGeneralViewStr(driver):
     res = ""
     driver.get(city_view_url.replace("city", f"embassyGeneralAttacksToAlly&cityId={cityIdStr}&position={embassyPosStr}&activeTab=tabEmbassy"))
-    driver.find_element(By.ID, "embassyGeneralAttacksToAlly")
-    embassyTable = driver.find_element(By.CLASS_NAME, "embassyTable").find_elements(By.TAG_NAME, "tr")
+    try:
+    	generalVIEW = driver.find_element(By.ID, "embassyGeneralAttacksToAlly")
+    	embassyTable = driver.find_element(By.CLASS_NAME, "embassyTable").find_elements(By.TAG_NAME, "tr")
+    except NoSuchElementException as e:
+    	print("Element not found!")
+    	return e
     for idx, row in enumerate(embassyTable):
         if idx > 0:
             res += getGeneralViewRow(row.get_attribute("innerHTML")) + "\n"
@@ -62,13 +68,20 @@ driver.get(city_view_url)
 #time.sleep(10)
 run = True
 while run:
-    generalViewStr = refreshGeneralViewStr(driver)
+    try:
+    	generalViewStr = str(refreshGeneralViewStr(driver))
+    except NoSuchElementException:
+    	generalViwStr = ""
+    else:
+    	generalViwStr = "@ Covax please"
     currentTime = datetime.datetime.now(tz=pytz.timezone("Europe/Budapest")).strftime("%Y-%m-%d %H:%M:%S")
     print(currentTime)
     data = {
                 "content": "GENERAL VIEW - Attacks on Alliance\t("+currentTime+")\n"+"```"+generalViewStr+"```"
             }
-    
-    requests.patch(webhook_url+"/messages/"+message_id+params,json=data)
-
-    time.sleep(37)
+    try:
+    	requests.patch(webhook_url+"/messages/"+message_id+params,json=data)
+    except:
+    	time.sleep(60)
+    	
+    time.sleep(random.random()*10+35)
