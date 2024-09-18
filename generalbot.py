@@ -55,7 +55,7 @@ else:
 world_view_url = "https://s305-en.ikariam.gameforge.com/?view=worldmap_iso"
 city_view_url = "https://s305-en.ikariam.gameforge.com/?view=city"
 options = Options()
-#options.add_argument("--headless=new")
+options.add_argument("--headless=new")
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 driver = webdriver.Chrome(options=options)
 driver.get(world_view_url)
