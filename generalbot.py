@@ -55,7 +55,7 @@ else:
 world_view_url = "https://s305-en.ikariam.gameforge.com/?view=worldmap_iso"
 city_view_url = "https://s305-en.ikariam.gameforge.com/?view=city"
 options = Options()
-options.add_argument("--headless=new")
+#options.add_argument("--headless=new")
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 driver = webdriver.Chrome(options=options)
 driver.get(world_view_url)
@@ -70,13 +70,15 @@ webhook_url = "https://discord.com/api/webhooks/1264720303918026763/COT-4RFFU2_x
 params = "?wait=true"
 
 data = {
-    "content": "Loading General View...",
-    "allowed_mentions": {
-        "users": ["508044939863523329, 396715532101091329, 380488161538867200"]  # Gordos, Covax, Anti
-    }
+    "content": "Loading General View..."
 }
 
+allowedMentions = {
+        
+    }
+
 response = requests.post(webhook_url+params, json=data)
+print(response.text)
 message_id = json.loads(response.text)["id"]
 driver.get(city_view_url)
 
@@ -87,7 +89,12 @@ while run:
         lastGeneralViewStr = generalViewStr
         generalViewStr = str(refreshGeneralViewStr(driver,attacksToAllyUrl))
         if not (generalViewStr == lastGeneralViewStr or generalViewStr in lastGeneralViewStr or generalViewStr in "| No members of your alliance are being attacked at the moment. | "):
-            requests.post("https://discord.com/api/webhooks/1286092006275158037/3wBws9InBkjQtXLhcJOZng_0qqeLmANeBeuPaJr-NYU5BfEJ0g6ubLWJSFOghOlFeQ_-", json={"content":"<@508044939863523329> <@396715532101091329> <@380488161538867200>"})
+            requests.post("https://discord.com/api/webhooks/1286092006275158037/3wBws9InBkjQtXLhcJOZng_0qqeLmANeBeuPaJr-NYU5BfEJ0g6ubLWJSFOghOlFeQ_-",
+                          json={
+                              "content":"<@508044939863523329> <@396715532101091329> <@380488161538867200>",
+                              "allowed_mentions": { "users": ["508044939863523329, 396715532101091329, 380488161538867200"] }   
+                              }
+                          )
     except NoSuchElementException:
         generalViwStr = "page didn't load, retrying..."
     else:
