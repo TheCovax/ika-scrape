@@ -74,27 +74,31 @@ data = {
 }
 
 allowedMentions = {
-        
-    }
+    "users": ["508044939863523329", "396715532101091329", "380488161538867200"]   
+}
 
 response = requests.post(webhook_url+params, json=data)
-print(response.text)
 message_id = json.loads(response.text)["id"]
 driver.get(city_view_url)
+
+
 
 run = True
 while run:
     try:
         attacksToAllyUrl = city_view_url.replace("city", f"embassyGeneralAttacksToAlly&cityId={cityIdStr}&position={embassyPosStr}&activeTab=tabEmbassy")
         lastGeneralViewStr = generalViewStr
-        generalViewStr = str(refreshGeneralViewStr(driver,attacksToAllyUrl))
+        generalViewStr = str(refreshGeneralViewStr(driver,attacksToAllyUrl)).strip()
         if not (generalViewStr == lastGeneralViewStr or generalViewStr in lastGeneralViewStr or generalViewStr in "| No members of your alliance are being attacked at the moment. | "):
             requests.post("https://discord.com/api/webhooks/1286092006275158037/3wBws9InBkjQtXLhcJOZng_0qqeLmANeBeuPaJr-NYU5BfEJ0g6ubLWJSFOghOlFeQ_-",
-                          json={
-                              "content":"<@508044939863523329> <@396715532101091329> <@380488161538867200>",
-                              "allowed_mentions": { "users": ["508044939863523329, 396715532101091329, 380488161538867200"] }   
-                              }
-                          )
+                            json={
+                                "content":"<@508044939863523329> <@396715532101091329> <@380488161538867200>\nAlly under attack!",
+                                "allowed_mentions": {
+                                        "parse": [],
+                                        "users": allowedMentions["users"]
+                                    }
+                                }
+                            )
     except NoSuchElementException:
         generalViwStr = "page didn't load, retrying..."
     else:
