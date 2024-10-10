@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 import sys
 import time
 import pytz
@@ -24,17 +24,21 @@ def getGeneralViewRow(inner_html, verbose=False):
     if verbose:
         print(rowString)
         
-    return rowString
+    return rowStringP
 
 def refreshGeneralViewStr(driver,url):
     res = ""
-    driver.get(url)
+
+    
     try:
+        driver.get(url)
         # generalVIEW = driver.find_element(By.ID, "embassyGeneralAttacksToAlly")
         embassyTable = driver.find_element(
             By.CLASS_NAME, "embassyTable").find_elements(By.TAG_NAME, "tr")
     except NoSuchElementException as e:
         print("Element not found!")
+        return e
+    except TimeoutException as e:
         return e
     for idx, row in enumerate(embassyTable):
         if idx > 0:
@@ -90,7 +94,8 @@ while run:
         lastGeneralViewStr = generalViewStr
         generalViewStr = str(refreshGeneralViewStr(driver,attacksToAllyUrl)).strip()
         if not (generalViewStr == lastGeneralViewStr or generalViewStr in lastGeneralViewStr or generalViewStr in "| No members of your alliance are being attacked at the moment. | "):
-            requests.post("https://discord.com/api/webhooks/1286092006275158037/3wBws9InBkjQtXLhcJOZng_0qqeLmANeBeuPaJr-NYU5BfEJ0g6ubLWJSFOghOlFeQ_-",
+            print("new: "+generalViewStr+" --- old: "+lastGeneralViewStr)
+            '''requests.post("https://discord.com/api/webhooks/1286092006275158037/3wBws9InBkjQtXLhcJOZng_0qqeLmANeBeuPaJr-NYU5BfEJ0g6ubLWJSFOghOlFeQ_-",
                             json={
                                 "content":"<@508044939863523329> <@396715532101091329> <@380488161538867200>\nAlly under attack!",
                                 "allowed_mentions": {
@@ -98,7 +103,7 @@ while run:
                                         "users": allowedMentions["users"]
                                     }
                                 }
-                            )
+                            )'''
     except NoSuchElementException:
         generalViwStr = "page didn't load, retrying..."
     else:
