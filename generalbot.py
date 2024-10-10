@@ -24,7 +24,7 @@ def getGeneralViewRow(inner_html, verbose=False):
     if verbose:
         print(rowString)
         
-    return rowStringP
+    return rowString
 
 def refreshGeneralViewStr(driver,url):
     res = ""
