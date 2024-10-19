@@ -49,6 +49,7 @@ def refreshGeneralViewStr(driver,url):
         for idx, row in enumerate(embassyTable):
             if idx > 0:
                 res += getGeneralViewRowStr(row.get_attribute("innerHTML")) + "\n"
+                getGeneralViewRowAsList(row.get_attribute("innerHTML"))
     
         return res
 
@@ -104,8 +105,8 @@ while run:
         lastGeneralViewStr = generalViewStr
         generalViewStr = str(refreshGeneralViewStr(driver,attacksToAllyUrl)).strip()
         if not (generalViewStr == lastGeneralViewStr or generalViewStr in lastGeneralViewStr or generalViewStr in "| No members of your alliance are being attacked at the moment. | "):
-            print("new: "+generalViewStr+" --- old: "+lastGeneralViewStr)
-            '''requests.post("https://discord.com/api/webhooks/1286092006275158037/3wBws9InBkjQtXLhcJOZng_0qqeLmANeBeuPaJr-NYU5BfEJ0g6ubLWJSFOghOlFeQ_-",
+            '''print("new: "+generalViewStr+" --- old: "+lastGeneralViewStr)
+            requests.post("https://discord.com/api/webhooks/1286092006275158037/3wBws9InBkjQtXLhcJOZng_0qqeLmANeBeuPaJr-NYU5BfEJ0g6ubLWJSFOghOlFeQ_-",
                             json={
                                 "content":"<@508044939863523329> <@396715532101091329> <@380488161538867200>\nAlly under attack!",
                                 "allowed_mentions": {
