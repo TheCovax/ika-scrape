@@ -135,7 +135,12 @@ while run:
         
         lastGeneralViewStr = generalViewStr
         generalViewStr = str(refreshGeneralViewStr(driver)).strip()
+        if verbose:
+            print("\nold: ",oldAttacksList,"\n")
+            print("new: ",attacksOnAlliesList,"\n")
         for event in attacksOnAlliesList:
+            if verbose:
+                print(event)
             if event not in oldAttacksList and generalViewStr not in "| No members of your alliance are being attacked at the moment. | ":
                 requests.post("https://discord.com/api/webhooks/1286092006275158037/3wBws9InBkjQtXLhcJOZng_0qqeLmANeBeuPaJr-NYU5BfEJ0g6ubLWJSFOghOlFeQ_-",
                             json={
@@ -149,6 +154,7 @@ while run:
     except NoSuchElementException:
         generalViewStr = "page didn't load, retrying..."
     except Exception as e:
+        print(e)
         generalViewStr = "@ Covax please "
         data["content"] = "<@396715532101091329>"
         
@@ -165,5 +171,5 @@ while run:
     except Exception:
         time.sleep(60)
 
-    time.sleep(random.random()*17+34)
-    #time.sleep(3)
+    #time.sleep(random.random()*17+34)
+    time.sleep(3)
