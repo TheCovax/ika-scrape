@@ -58,10 +58,12 @@ verbose = False
 ikariam_cookie_path = "ikariam_cookie.txt"
 
 if len(sys.argv) > 1:
-    ika_cookie = sys.argv[1]
+    #ika_cookie = sys.argv[1]
     for i in sys.argv:
         if "-v" in str(i):
             verbose = True
+        if str(i) == "-c" and len(sys.argv)>i+1:
+            ika_cookie = sys.argv[i+1]
 else:
     ika_cookie = open(ikariam_cookie_path).readline().strip()
     
