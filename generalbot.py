@@ -43,8 +43,8 @@ def refreshGeneralViewStr(driver,url):
         return e
     except TimeoutException as e:
         return e
-    else:
-        return "error"
+    except Exception as e:
+        return e
     finally:
         for idx, row in enumerate(embassyTable):
             if idx > 0:
@@ -116,7 +116,7 @@ while run:
                             )'''
     except NoSuchElementException:
         generalViewStr = "page didn't load, retrying..."
-    else:
+    except Exception as e:
         generalViewStr = "@ Covax please "
         data["content"] = "<@396715532101091329>"
         
@@ -130,7 +130,7 @@ while run:
 
     try:
         asd=0#requests.patch(webhook_url+"/messages/"+message_id+params, json=data)
-    except:
+    except Exception:
         time.sleep(60)
 
     #time.sleep(random.random()*17+34)
