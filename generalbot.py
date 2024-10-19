@@ -11,15 +11,20 @@ import time
 import pytz
 import random
 
+def getGeneralViewRowAsList(inner_html):
+    soup = BeautifulSoup(inner_html,'html.parser')
+    cells = soup.find_all("td")
+    for c in cells:
+        print(c.contents)
 
-def getGeneralViewRow(inner_html, verbose=False):
+
+def getGeneralViewRowStr(inner_html, verbose=False):
     soup = BeautifulSoup(inner_html, 'html.parser')
 
-    cells = soup.findAll("td")
+    cells = soup.find_all("td")
     rowString = "| "
     for c in cells:
-        rowString = rowString + \
-            str(c.getText(strip=True)).strip().replace("  ", "") + " | "
+        rowString = rowString + str(c.getText(strip=True)).strip().replace("  ", "") + " | "
 
     if verbose:
         print(rowString)
@@ -28,8 +33,6 @@ def getGeneralViewRow(inner_html, verbose=False):
 
 def refreshGeneralViewStr(driver,url):
     res = ""
-
-    
     try:
         driver.get(url)
         # generalVIEW = driver.find_element(By.ID, "embassyGeneralAttacksToAlly")
@@ -40,10 +43,16 @@ def refreshGeneralViewStr(driver,url):
         return e
     except TimeoutException as e:
         return e
-    for idx, row in enumerate(embassyTable):
-        if idx > 0:
-            res += getGeneralViewRow(row.get_attribute("innerHTML")) + "\n"
-    return res
+    else:
+        return "error"
+    finally:
+        for idx, row in enumerate(embassyTable):
+            if idx > 0:
+                res += getGeneralViewRowStr(row.get_attribute("innerHTML")) + "\n"
+    
+        return res
+
+attacksOnAlliesList = []
 
 verbose = False
 ikariam_cookie_path = "ikariam_cookie.txt"
@@ -70,7 +79,6 @@ generalViewStr = ""
 cityIdStr = "133455"
 embassyPosStr = "9"
 webhook_url = "https://discord.com/api/webhooks/1264720303918026763/COT-4RFFU2_xdb6LZk1q7tUAMKSp_-0gP_BNYhfv2NALPHVrpHNaj0eyjY_DGSxE33g4"
-# old: "https://discord.com/api/webhooks/1260238289743511644/cXYGPvAeZVhjmGlOQ8txKTVkgABwPcYV4Bre1YlSeM147qfeSq9r4kcxV0HPWd1-IsNO"
 params = "?wait=true"
 
 data = {
@@ -105,23 +113,23 @@ while run:
                                 }
                             )'''
     except NoSuchElementException:
-        generalViwStr = "page didn't load, retrying..."
+        generalViewStr = "page didn't load, retrying..."
     else:
-        generalViwStr = "@ Covax please "
+        generalViewStr = "@ Covax please "
         data["content"] = "<@396715532101091329>"
         
-    currentTime = datetime.datetime.now(tz=pytz.timezone(
-        "Europe/Budapest")).strftime("%Y-%m-%d %H:%M:%S")
+    currentTime = datetime.datetime.now(tz=pytz.timezone("Europe/Budapest")).strftime("%Y-%m-%d %H:%M:%S")
     
     if verbose:
-        print(currentTime)
+        print("\n"+currentTime + "-" +generalViewStr+"\n")
 
     data["content"] = "GENERAL VIEW - Attacks on Alliance\t(" + \
         currentTime+")\n"+"```"+generalViewStr+"```"
 
     try:
-        requests.patch(webhook_url+"/messages/"+message_id+params, json=data)
+        asd=0#requests.patch(webhook_url+"/messages/"+message_id+params, json=data)
     except:
         time.sleep(60)
 
-    time.sleep(random.random()*17+34)
+    #time.sleep(random.random()*17+34)
+    time.sleep(3)
