@@ -86,7 +86,7 @@ def refreshGeneralViewStr(driver):
 attacksOnAlliesList = []
 oldAttacksList = []
 
-verbose = False
+verbose = True
 ikariam_cookie_path = "ikariam_cookie.txt"
 
 if len(sys.argv) > 1:
@@ -123,8 +123,8 @@ allowedMentions = {
     "users": ["508044939863523329", "396715532101091329", "380488161538867200"]   
 }
 
-#response = requests.post(webhook_url+params, json=data)
-#message_id = json.loads(response.text)["id"]
+response = requests.post(webhook_url+params, json=data)
+message_id = json.loads(response.text)["id"]
 driver.get(city_view_url)
 
 
@@ -161,9 +161,9 @@ while run:
         currentTime+")\n"+"```"+generalViewStr+"```"
 
     try:
-        asd=0#requests.patch(webhook_url+"/messages/"+message_id+params, json=data)
+        requests.patch(webhook_url+"/messages/"+message_id+params, json=data)
     except Exception:
         time.sleep(60)
 
-    #time.sleep(random.random()*17+34)
-    time.sleep(3)
+    time.sleep(random.random()*17+34)
+    #time.sleep(3)
