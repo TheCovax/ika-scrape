@@ -1,0 +1,15 @@
+['\n', <script type="text/javascript">
+                                    $(document).ready(function () {
+                                        getCountdown({
+                                            enddate: 1729382487,
+                                            currentdate: 1729376574,
+                                            el: "researchCountDown0"
+                                        }, 3, " ", "", true, true);
+                                    });
+                                </script>, '\n', <div class="type">
+<div class="time" id="researchCountDown0">1h 38m 33s</div>
+</div>, '\n']
+['Pillage (en route)']
+['1']
+['\n', <a class="bold" href="?view=avatarProfile&amp;avatarId=150269" onclick="ajaxHandlerCall(this.href); return false;">zika</a>, '\n', <a class="bold" href="?view=island&amp;cityId=108934">(Z-1                                )</a>, '\n', <a class="allyMailIcon" href="?view=sendIKMessage&amp;receiverId=150269" onclick="ajaxHandlerCall(this.href);return false;" title="Write message"></a>, '\n']
+['\n', <a class="bold" href="?view=avatarProfile&amp;avatarId=142918" onclick="ajaxHandlerCall(this.href); return false;">Covax</a>, '\n', <a class="bold" href="?view=island&amp;cityId=87355">(MH1                                )</a>, '\n', <a class="allyMailIcon" href="?view=sendIKMessage&amp;receiverId=142918" onclick="ajaxHandlerCall(this.href);return false;" title="Write message"></a>, '\n']
