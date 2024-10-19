@@ -63,6 +63,7 @@ def getGeneralViewRowStr(inner_html, verbose=False):
     return rowString
 
 def refreshGeneralViewStr(driver):
+    global attacksOnAlliesList, oldAttacksList
     url = city_view_url.replace("city", f"embassyGeneralAttacksToAlly&cityId={cityIdStr}&position={embassyPosStr}&activeTab=tabEmbassy")
     res = ""
     try:
