@@ -135,8 +135,8 @@ while run:
         lastGeneralViewStr = generalViewStr
         generalViewStr = str(refreshGeneralViewStr(driver)).strip()
         if verbose:
-            print("\nold: ",oldAttacksList,"\n")
-            print("new: ",attacksOnAlliesList,"\n")
+            print("\nold: ",str(oldAttacksList),"\n")
+            print("new: ",str(attacksOnAlliesList),"\n")
         for event in attacksOnAlliesList:
             if verbose:
                 print(event)
@@ -170,5 +170,5 @@ while run:
     except Exception:
         time.sleep(60)
 
-    #time.sleep(random.random()*17+34)
-    time.sleep(3)
+    time.sleep(random.random()*17+34)
+    #time.sleep(3)
