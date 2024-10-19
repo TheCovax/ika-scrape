@@ -54,7 +54,7 @@ def refreshGeneralViewStr(driver,url):
 
 attacksOnAlliesList = []
 
-verbose = False
+verbose = True
 ikariam_cookie_path = "ikariam_cookie.txt"
 
 if len(sys.argv) > 1:
