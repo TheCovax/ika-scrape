@@ -12,6 +12,9 @@ import pytz
 import random
 import re
 
+attacksOnAlliesList = []
+oldAttacksList = []
+
 def extract_city_id(cell_content):
     city_id_match = re.search(r'cityId=(\d+)', str(cell_content))
     if city_id_match:
@@ -80,11 +83,6 @@ def refreshGeneralViewStr(driver):
             res += getGeneralViewRowStr(row.get_attribute("innerHTML")) + "\n"
             attacksOnAlliesList.append(getGeneralViewRowAsList)
     return res
-
-
-
-attacksOnAlliesList = []
-oldAttacksList = []
 
 verbose = True
 ikariam_cookie_path = "ikariam_cookie.txt"
