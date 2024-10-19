@@ -10,13 +10,41 @@ import sys
 import time
 import pytz
 import random
+import re
+
+def extract_city_id(cell_content):
+    city_id_match = re.search(r'cityId=(\d+)', str(cell_content))
+    if city_id_match:
+        return city_id_match.group(1)
+    return None
 
 def getGeneralViewRowAsList(inner_html):
+    contents = []
+    res_list = []
     soup = BeautifulSoup(inner_html,'html.parser')
     cells = soup.find_all("td")
-    for c in cells:
-        print(c.contents)
+    if len(cells) > 1:
+        for c in cells:
+            contents.append(c.contents)
 
+
+
+        period = str(contents[0])
+        enddate_match = re.search(r'enddate:\s*(\d+)', period)
+        if enddate_match:
+            period = int(enddate_match.group(1))
+        else:
+            print("End Epoch Time not found")
+
+        res_list.append(period)                         #time period of action
+        res_list.append(contents[1][0])                 #Type of action
+        res_list.append(contents[2][0])                          #Number of attacking units
+        res_list.append(extract_city_id(contents[3]))   #Attacker City ID
+        res_list.append(extract_city_id(contents[4]))   #Ally City ID
+        
+        return res_list
+    else:
+        return None
 
 def getGeneralViewRowStr(inner_html, verbose=False):
     soup = BeautifulSoup(inner_html, 'html.parser')
@@ -31,11 +59,11 @@ def getGeneralViewRowStr(inner_html, verbose=False):
         
     return rowString
 
-def refreshGeneralViewStr(driver,url):
+def refreshGeneralViewStr(driver):
+    url = city_view_url.replace("city", f"embassyGeneralAttacksToAlly&cityId={cityIdStr}&position={embassyPosStr}&activeTab=tabEmbassy")
     res = ""
     try:
         driver.get(url)
-        # generalVIEW = driver.find_element(By.ID, "embassyGeneralAttacksToAlly")
         embassyTable = driver.find_element(
             By.CLASS_NAME, "embassyTable").find_elements(By.TAG_NAME, "tr")
     except NoSuchElementException as e:
@@ -45,17 +73,20 @@ def refreshGeneralViewStr(driver,url):
         return e
     except Exception as e:
         return e
-    finally:
-        for idx, row in enumerate(embassyTable):
-            if idx > 0:
-                res += getGeneralViewRowStr(row.get_attribute("innerHTML")) + "\n"
-                getGeneralViewRowAsList(row.get_attribute("innerHTML"))
-    
-        return res
+    oldAttacksList = list(attacksOnAlliesList)
+    attacksOnAlliesList = []
+    for idx, row in enumerate(embassyTable):
+        if idx > 0:
+            res += getGeneralViewRowStr(row.get_attribute("innerHTML")) + "\n"
+            attacksOnAlliesList.append(getGeneralViewRowAsList)
+    return res
+
+
 
 attacksOnAlliesList = []
+oldAttacksList = []
 
-verbose = True
+verbose = False
 ikariam_cookie_path = "ikariam_cookie.txt"
 
 if len(sys.argv) > 1:
@@ -92,8 +123,8 @@ allowedMentions = {
     "users": ["508044939863523329", "396715532101091329", "380488161538867200"]   
 }
 
-response = requests.post(webhook_url+params, json=data)
-message_id = json.loads(response.text)["id"]
+#response = requests.post(webhook_url+params, json=data)
+#message_id = json.loads(response.text)["id"]
 driver.get(city_view_url)
 
 
@@ -101,12 +132,12 @@ driver.get(city_view_url)
 run = True
 while run:
     try:
-        attacksToAllyUrl = city_view_url.replace("city", f"embassyGeneralAttacksToAlly&cityId={cityIdStr}&position={embassyPosStr}&activeTab=tabEmbassy")
+        
         lastGeneralViewStr = generalViewStr
-        generalViewStr = str(refreshGeneralViewStr(driver,attacksToAllyUrl)).strip()
-        if not (generalViewStr == lastGeneralViewStr or generalViewStr in lastGeneralViewStr or generalViewStr in "| No members of your alliance are being attacked at the moment. | "):
-            '''print("new: "+generalViewStr+" --- old: "+lastGeneralViewStr)
-            requests.post("https://discord.com/api/webhooks/1286092006275158037/3wBws9InBkjQtXLhcJOZng_0qqeLmANeBeuPaJr-NYU5BfEJ0g6ubLWJSFOghOlFeQ_-",
+        generalViewStr = str(refreshGeneralViewStr(driver)).strip()
+        for event in attacksOnAlliesList:
+            if event not in oldAttacksList and generalViewStr not in "| No members of your alliance are being attacked at the moment. | ":
+                requests.post("https://discord.com/api/webhooks/1286092006275158037/3wBws9InBkjQtXLhcJOZng_0qqeLmANeBeuPaJr-NYU5BfEJ0g6ubLWJSFOghOlFeQ_-",
                             json={
                                 "content":"<@508044939863523329> <@396715532101091329> <@380488161538867200>\nAlly under attack!",
                                 "allowed_mentions": {
@@ -114,7 +145,7 @@ while run:
                                         "users": allowedMentions["users"]
                                     }
                                 }
-                            )'''
+                            )
     except NoSuchElementException:
         generalViewStr = "page didn't load, retrying..."
     except Exception as e:
