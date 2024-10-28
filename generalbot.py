@@ -45,6 +45,7 @@ def getGeneralViewRowAsList(inner_html):
         res_list.append(extract_city_id(contents[3]))   #Attacker City ID
         res_list.append(extract_city_id(contents[4]))   #Ally City ID
         
+        print(res_list)
         return res_list
     else:
         return None

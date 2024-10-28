@@ -10,7 +10,7 @@ from file_operations import write_to_file
 
 from ikaTrack import parse_ms_from_source
 from gui import login_layout, create_main_layout
-from ikaWorld import find_island, refresh_local_map
+from ikaWorld import find_island, refresh_local_map, getDriver
 from IkaNoti import *
 
 
@@ -215,6 +215,7 @@ while True: #main loop
         main_window[f'main_menu'].update(visible=False)
         main_window[f'refresh_map'].update(visible=True)
         main_window.read(10)
+        getDriver(driver)
         refresh_local_map(main_window['map_progress'])
         main_window[f'refresh_map'].update(visible=False)
         main_window[f'main_menu'].update(visible=True)
