@@ -212,12 +212,26 @@ def find_island(filters,miracle_select, window, is_ally = 0):
 
 def scrape_island(x_pos,y_pos):
     driver.get(island_view_url+"&xcoord={}&ycoord={}".format(x_pos,y_pos))
-    
+    res=[]
+
     page_source = driver.page_source
     soup = BeautifulSoup(page_source,'html.parser')
-    soup = soup.find("div",{"id":"cities"})
+    island_soup = soup.find("div",{"id":"cities"})
     islandcity_re = re.compile(r"cityLocation[0-9][0-9]\Z|cityLocation[0-9]\Z")
-    cities = soup.find_all("div",{"id":islandcity_re})
+    city_soup = island_soup.find_all("div",{"id":islandcity_re})
 
-    for c in cities:
-        print(c,"\n")
+    cities = []
+    for c in city_soup:
+        if "city" in c['class']:
+            current_city=[]
+            cca = c.find("a",{"class":"island_feature_img"})
+            ccl = re.findall("level([0-9][0-9]|[0-9])",str(c))[0]
+            current_city.append(str(cca["href"]).split("=")[-1])
+            current_city.append(str(cca["title"]))
+            current_city.append(ccl)
+            cities.append(current_city)
+        #print(c,"\n")
+
+    wonder_soup = island_soup.find("div",{"id":"islandwonder"})
+    #wonder = wonder_soup["class"](r"wonder[0-9]")
+
