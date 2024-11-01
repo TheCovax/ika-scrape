@@ -26,7 +26,6 @@ def isl_wonder_attr(tag):
 def isl_tradegood_attr(tag):
     return 'tradegood' in tag.get('class', [])
 
-
 def extract_coordinates(island_name):
     # Pattern matches "Name [x:y]" where x and y can be one to three digits
     pattern = r'\[(\d{1,3}):(\d{1,3})\]'
@@ -54,39 +53,7 @@ def parse_mapislands_from_source(full_source): #gets worldview with 22x22 island
                 island_data.append(island_name)
                 x = 0
                 y = 0
-                '''if island_name.index(":") - len(island_name) == -3: #[ :y]
-                    if island_name[-6:-5] == "[":                   #[xx:y]
-                        x = int(island_name[-5:-3])
-                        y = int(island_name[-2:-1])
-                    elif island_name[-5:-4] == "[":                 #[x:y]
-                        x = int(island_name[-4:-3])
-                        y = int(island_name[-2:-1])
-                    elif island_name[-7:-6] == "[":                 #[xxx:y]
-                        x = int(island_name[-6:-3])
-                        y = int(island_name[-2:-1])    
-                        
-                elif island_name.index(":") - len(island_name) == -4: #[ :yy]
-                    if island_name[-7:-6] == "[":                     #[xx:yy]
-                        x = int(island_name[-6:-4])
-                        y = int(island_name[-3:-1])
-                    elif island_name[-6:-5] == "[":                   #[x:yy]
-                        x = int(island_name[-5:-4])
-                        y = int(island_name[-3:-1])
-                    elif island_name[-8:-7] == "[":                   #[xxx:yy]
-                        x = int(island_name[-7:-4])
-                        y = int(island_name[-3:-1])
-                    
-                        
-                elif island_name.index(":") - len(island_name) == -5: #[ :yyy]
-                    if island_name[-8:-7] == "[":                     #[xx:yyy]
-                        x = int(island_name[-6:-5])
-                        y = int(island_name[-4:-1])
-                    elif island_name[-7:-6] == "[":                   #[x:yyy]
-                        x = int(island_name[-7:-5])
-                        y = int(island_name[-4:-1])
-                    elif island_name[-9:-8] == "[":                   #[xxx:yyy]
-                        x = int(island_name[-8:-5])
-                        y = int(island_name[-4:-1])'''
+
                 x,y = extract_coordinates(island_name)
 
                 
@@ -212,15 +179,32 @@ def find_island(filters,miracle_select, window, is_ally = 0):
 
 def scrape_island(x_pos,y_pos):
     driver.get(island_view_url+"&xcoord={}&ycoord={}".format(x_pos,y_pos))
-    res=[]
+
+    #island_id = -1
+    tradegood_level = -1
+    forest_level = -1
+    wonder_level = -1
+    cities = []
 
     page_source = driver.page_source
     soup = BeautifulSoup(page_source,'html.parser')
     island_soup = soup.find("div",{"id":"cities"})
+    
+
+    wonder_soup = island_soup.find("div",{"id":"islandwonderScroll"})
+    wonder_level = re.search(r"\((\d+)\)",wonder_soup.find("div",{"id":"js_islandWonderScrollTitle"}).text).group(1)
+    #print(wonder_level)
+
+    tradegood_soup = island_soup.find("div",{"id":"islandtradegood"})
+    #tradegood_soup = tradegood_soup.find("a",{"id":"js_islandTradegoodLink"})
+    #island_id=tradegood_soup["href"].split("&")[-1]
+    tradegood_level = re.search(r"\((\d+)\)",island_soup.find("span",{"id":"js_islandTradegoodScrollTitle"}).text).group(1)
+    forest_level = re.search(r"Forest \((\d+)\)",island_soup.find("span",{"id":"js_islandResourceScrollTitle"}).text).group(1)
+
     islandcity_re = re.compile(r"cityLocation[0-9][0-9]\Z|cityLocation[0-9]\Z")
     city_soup = island_soup.find_all("div",{"id":islandcity_re})
 
-    cities = []
+    
     for c in city_soup:
         if "city" in c['class']:
             current_city=[]
@@ -231,7 +215,46 @@ def scrape_island(x_pos,y_pos):
             current_city.append(ccl)
             cities.append(current_city)
         #print(c,"\n")
+    '''
+    res = {
+        #"island_id":island_id,
+        "tradegood_level":tradegood_level,
+        "forest_level":forest_level,
+        "miracle_level":wonder_level,
+        "cities":cities,
+    }'''
 
-    wonder_soup = island_soup.find("div",{"id":"islandwonder"})
-    #wonder = wonder_soup["class"](r"wonder[0-9]")
+    res="{};{};{};{}".format(tradegood_level,forest_level,wonder_level,str(cities))
+    print(res)
 
+    return res
+
+def scrape_city(city_id):
+    driver.get("https://s305-en.ikariam.gameforge.com/index.php?view=cityDetails&destinationCityId={}".format(city_id))
+
+    page_source = driver.page_source
+    soup = BeautifulSoup(page_source,'html.parser')
+
+    city_soup = soup.find("table",{"class":"cityinfo"})
+    ally_soup = city_soup.find("a",{"id":"js_selectedCityAllyName"})
+    ally_id = re.search(r"allyId=(\d+)",ally_soup.attrs["href"]).group(1)
+
+    owner_soup = city_soup.find("a",{"id":"js_selectedCityOwnerName"})
+    owner_id = re.search(r"avatarId=(\d+)",owner_soup.attrs["href"]).group(1)
+    owner_name = owner_soup.attrs["title"]
+    print( "Player: {}({})[{}] - city_id:{}".format(owner_name, owner_id, ally_id, city_id))
+    return "{},{},{}\n".format(owner_name, owner_id, ally_id, city_id)
+
+def scrape_player(player_id):
+    driver.get("https://s305-en.ikariam.gameforge.com/index.php?view=avatarProfile&avatarId={}".format(player_id))
+
+    page_source = driver.page_source
+    soup = BeautifulSoup(page_source,'html.parser')
+    res="{}".format(player_id)
+    table_soup = soup.find("table",{"class":"highscoreCompareTable"})
+    table_rows = table_soup.find_all("tr")
+    for idx, tr in enumerate(table_rows):
+        if idx > 0:
+            cells = tr.find_all("td")
+            res.append(","+str(cells[2].text.replace(",","")))
+    return res
