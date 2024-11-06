@@ -99,25 +99,35 @@ class Slot:
             self.strongest = True
 
     def populate_slot(self,units:batch):
-        #TODO AAAAAAAAAAAA
+        candidate_batch = []
+        candidate_power = -1
+        candidate_class = ""
         current_unit_name = ""
         units.sort(reverse=(not self.strongest),key=Unit.get_power)
         for cls in self.preferred_unit_class:
             for unit in units:
-                if current_power != -1 and current_unit_name == unit.name:
+                if self.power != -1 and current_unit_name == unit.name:
                     if self.size >= unit.size:
                             self.size -= unit.size
-                            #.append(unit)
-                            current_power += unit.get_power()
+                            candidate_batch.append(unit)
+                            candidate_power += unit.get_power()
                 elif unit.unit_class == cls:
                     if self.slot_class == "Frontline" and unit.unit_class == "Long-Range Fighter" and unit.ammo != 0:
                         continue
                     if self.size >= unit.size:
                         self.size -= unit.size
-                        # .append()
+                        candidate_batch.append()
                         current_unit_name = unit.name
-                        self.power = unit.get_power()
+                        candidate_power = unit.get_power()
+                        candidate_class = unit.unit_class
             
+        if candidate_class and self.preferred_unit_class.index(candidate_class) < self.preferred_unit_class.index(self.units[0].unit_class):
+            if candidate_power > self.power:
+
+                self.units.clear()
+                for i in candidate_batch:
+                    self.units.append(i)
+                self.power=candidate_power
             #units.pop(units.index(unit))
 
 
@@ -229,9 +239,25 @@ def generate_sea_wave(ram=0,fire=0,steam=0,ballista=0,cata=0,mortar=0,rocket=0,d
     wave : batch = []
     #TODO
 
-def generate_land_field()
+def main_battle():
+    Attacker_Field = Field()
+    Defender_Field = Field()
 
-
+    #Attack Sequence
+        #Air Defence
+            #Gyrocopters
+        #Bombers:
+            #Balloon-Bombardiers
+        #Artillery:
+            #Mortars → Catapults → Rams
+        #Long-range weapons:
+            #Sulphur Carabineers → Archers
+        #Front line:
+            #Town wall → Hoplites → Steam Giants
+            #Swordsmen → Spearmen (when moved to the front battle line)
+            #Slingers → Archers → Sulphur Carabineers (when out of ammo and moved to the front battle line)
+        #Flanks:
+            #Swordsmen → Spearmen
 '''
 locations = {
         "mainline": Location(5, 30, [73, 74], strongest=False),
